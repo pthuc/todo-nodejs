@@ -15,8 +15,8 @@ router.route('/:taskId')
     .post(commentOnTask)
 
 
-router.route('/:taskId/:commentId/:reactType')
-    .get(reactComment)
+router.route('/:taskId/:commentId')
+    .post(reactComment)
 
 
 export default router

@@ -88,9 +88,10 @@ export const commentOnTask: RequestHandler = async (req, res, next) => {
 }
 
 // React to A Comment form A Task //////////////////////////////////////////////////////////////////////////////////////////////
-export const reactComment: RequestHandler =async (req, res, next) => {
+export const reactComment: RequestHandler = async (req, res, next) => {
     try {
-        const { taskId, commentId, reactType } = req.params
+        const { taskId, commentId } = req.params
+        const { reactType } = req.body
         const reactor = req.username
 
         const task = await Task.findById(taskId)
@@ -103,10 +104,10 @@ export const reactComment: RequestHandler =async (req, res, next) => {
             if (reactType === type) {
                 if (isReacted != -1) {
                     task.comments.id(commentId)?.reaction[type].splice(isReacted, 1)
-                    response = `un${reactType}ed!`
+                    response = `un${reactType}d!`
                 } else {
                     task.comments.id(commentId)?.reaction[type].push(reactor)
-                    response = `${reactType}ed!`
+                    response = `${reactType}d!`
                 }
             } else {
                 if (isReacted != -1) {
