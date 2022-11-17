@@ -1,17 +1,20 @@
 import { Schema, model } from 'mongoose'
 
+export const reactionTypes = ['like', 'dislike', 'love', 'care', 'laugh']
+
+const reaction = reactionTypes.reduce((obj: any, type: string) => {
+    obj[type] = [String]
+    return obj
+}, {})
+
 const commentSchema = new Schema(
     {
-        user: {
-            type: Schema.Types.ObjectId,
+        commenter: {
+            type: String,
             required: true
         },
-        comment: {
-            type: String
-        },
-        likes: [
-            Schema.Types.ObjectId
-        ]
+        comment: String,
+        reaction
     },
     {
         timestamps: true
@@ -29,11 +32,11 @@ const taskSchema = new Schema({
         required: true
     },
     assigner: {
-        type: Schema.Types.ObjectId,
+        type: String,
         required: true
     },
     assignee: {
-        type: Schema.Types.ObjectId,
+        type: String,
         required: true
     },
     comments: {
