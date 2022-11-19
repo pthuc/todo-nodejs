@@ -33,7 +33,7 @@ const authenticator: RequestHandler = async (req, res, next) => {
         next()
     } catch (error) {
         res.status(400)
-        next(error)
+        next(new Error('Invalid credentials'))
     }
 }
 

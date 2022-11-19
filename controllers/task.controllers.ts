@@ -1,8 +1,7 @@
 import { RequestHandler } from "express"
-import Task from "../models/task.model"
+import Task, { reactionTypes }  from "../models/task.model"
 import User from "../models/auth.model"
 import { validator as taskValidator } from "../validators/task.validator"
-import { reactionTypes } from "../models/task.model"
 
 // Get All Tasks from database //////////////////////////////////////////////////////////////////////////////////////////////
 export const getTasks: RequestHandler = async (req, res, next) => {
@@ -34,10 +33,10 @@ export const addTask: RequestHandler = async (req, res, next) => {
         const assigneeCheck = await User.findOne({ username: assignee })
         if (!assigneeCheck) throw new Error('Invalid assignee username')
 
-        await Task.create({ title, description, assignee, assigner , completed: false})
+        const newTask = await Task.create({ title, description, assignee, assigner , completed: false})
 
         res.status(200)
-            .json('Successfully added a new task')
+            .json(newTask)
     } catch (error) {
         res.status(400)
         next(error)
@@ -78,9 +77,9 @@ export const commentOnTask: RequestHandler = async (req, res, next) => {
         })
 
         if (!task) throw new Error('Task does not exist')
-
-            res.status(200)
-                .json('Commented!')
+        
+        res.status(200)
+            .json('Commented!')
     } catch (error) {
         res.status(200)
         next(error)

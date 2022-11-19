@@ -20,10 +20,14 @@ dotenv.config()
 const PORT = process.env.PORT
 
 
+const config = {
+    origin: /.+/,//['http://localhost:3000'],
+    credentials: true
+}
 // Apply middlewares
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-app.use(cors())
+app.use(cors(config))
 app.use(cookieParser())
 app.use(helmet())
 

@@ -8,7 +8,7 @@ import { config } from 'dotenv'
 config()
 
 const PRIVATE_KEY = process.env.PRIVATE_KEY as string
-const lifeTime = 1/2*60*60*1000
+const maxAge = 1/2*60*60*1000
 
 export const signUp: RequestHandler = async(req, res, next) => {
     try {
@@ -34,14 +34,18 @@ export const signUp: RequestHandler = async(req, res, next) => {
         const token = jwt.sign(
             { username, email, level },
             PRIVATE_KEY,
-            { expiresIn: lifeTime }
+            { expiresIn: maxAge }
         )
         
-        res.cookie('x-auth-token', token, { maxAge: lifeTime, httpOnly: true })
+        res.cookie('x-auth-token', token, { maxAge, httpOnly: true, sameSite: "strict" })
 
         // Client delivery
         res.status(200)
-            .json('Successfully created user')
+            .json({
+                username,
+                email,
+                level
+            })
 
     } catch (error) {
         res.status(400)
@@ -71,16 +75,39 @@ export const signIn: RequestHandler = async(req, res, next) => {
         const token = jwt.sign(
             { username, email, level },
             PRIVATE_KEY,
-            { expiresIn: lifeTime }
+            { expiresIn: maxAge }
         )
-        res.cookie('x-auth-token', token, { maxAge: lifeTime, httpOnly: true })
+
+        res.cookie('x-auth-token', token, { maxAge, httpOnly: true, sameSite: "strict" })
 
         // Client delivery
         res.status(200)
-            .json('Successfully signed in!')
+            .json({
+                username,
+                email,
+                level
+            })
 
     } catch(error) {
         res.status(400)
         next(error)
     }
+}
+
+export const validate: RequestHandler = (req, res) => {
+    const username = req.username
+    const email = req.email
+    const level = req.level
+    res.status(200)
+        .json({
+            username,
+            email,
+            level
+        })
+}
+
+export const signOut: RequestHandler = async (req, res) => {
+    res.cookie('x-auth-token', null, { maxAge:60*60*1/60/60, httpOnly: true})
+    res.status(200)
+        .json('Successfully Logged out')
 }
